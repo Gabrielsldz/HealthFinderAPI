@@ -2,37 +2,36 @@ package com.example.saudeapiback.controllers;
 
 
 import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
+import com.example.saudeapiback.dto.EstabelecimentoDTO;
 import com.example.saudeapiback.repositories.EstabelecimentoRepository;
+import com.example.saudeapiback.services.EstabelecimentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/establishments")
+@RequestMapping("/establishment")
 public class EstabelecimentoController {
 
     @Autowired
-    private EstabelecimentoRepository estabelecimentoRepository;
+    private EstabelecimentoService estabelecimentoService;
 
-    // Buscar estabelecimentos por código de tipo e UF
-    // Criar DTO para response de estabelecimentos posteriormente
     @PostMapping("/get_establishments")
-    public ResponseEntity<List<Estabelecimento>> getEstablishments(@RequestBody Map<String, Integer> params) {
-        Integer codigoTipoUnidade = params.get("codigo_tipo_unidade");
-        Integer codigoUf = params.get("codigo_uf");
-
-        List<Estabelecimento> estabelecimentos = estabelecimentoRepository.findByCodigoTipoUnidadeAndCodigoUf(codigoTipoUnidade, codigoUf);
-        if (estabelecimentos.isEmpty()) {
+    public ResponseEntity<List<EstabelecimentoDTO>> getEstablishments(@RequestBody Map<String, Integer> params) {
+        List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstabelecimentos(params);
+        if (estabelecimentoDTOs.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(estabelecimentos);
+        return ResponseEntity.ok(estabelecimentoDTOs);
     }
-
-
-
-
-
 }
+
+
+
+
+
+

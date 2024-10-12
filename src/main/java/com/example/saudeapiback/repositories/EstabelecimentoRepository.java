@@ -5,11 +5,13 @@ import org.springframework.stereotype.Repository;
 import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
 import java.util.List;
 
+
 @Repository
-public interface EstabelecimentoRepository extends JpaRepository<Estabelecimento, Long> {
+public interface EstabelecimentoRepository extends JpaRepository<Estabelecimento, Integer> {
 
+    // Método para buscar o Estabelecimento pelo código CNES
+    Estabelecimento findByCodigoCnes(int codigoCnes);
 
+    // Método para buscar estabelecimentos por código de tipo e UF
     List<Estabelecimento> findByCodigoTipoUnidadeAndCodigoUf(Integer codigoTipoUnidade, Integer codigoUf);
-
-
 }

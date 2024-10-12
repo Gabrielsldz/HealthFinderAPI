@@ -1,0 +1,27 @@
+Acre - 12
+Alagoas - 27
+Amap� - 16
+Amazonas - 13
+Bahia - 29
+Cear� - 23
+Distrito Federal - 53
+Esp�rito Santo - 32
+Goi�s - 52
+Maranh�o - 21
+Mato Grosso - 51
+Mato Grosso do Sul - 50
+Minas Gerais - 31
+Par� - 15
+Para�ba - 25
+Paran� - 41
+Pernambuco - 26
+Piau� - 22
+Rio Grande do Norte - 24
+Rio Grande do Sul - 43
+Rio de Janeiro - 33
+Rond�nia - 11
+Roraima - 14
+Santa Catarina - 42
+S�o Paulo - 35
+Sergipe - 28
+Tocantins - 17
