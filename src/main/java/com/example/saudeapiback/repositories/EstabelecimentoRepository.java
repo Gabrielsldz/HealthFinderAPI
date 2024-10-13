@@ -14,4 +14,11 @@ public interface EstabelecimentoRepository extends JpaRepository<Estabelecimento
 
     // Método para buscar estabelecimentos por código de tipo e UF
     List<Estabelecimento> findByCodigoTipoUnidadeAndCodigoUf(Integer codigoTipoUnidade, Integer codigoUf);
+
+    // Método para buscar estabelecimentos por código de tipo e município
+    List<Estabelecimento> findByCodigoTipoUnidadeAndCodigoMunicipio(Integer codigoTipoUnidade, Integer codigoMunicipio);
+
+    List<Estabelecimento> findByCodigoCepEstabelecimentoInAndCodigoTipoUnidade(List<String> cepsProximos, int i);
+
+    List<Estabelecimento> findByCodigoCepEstabelecimentoIn(List<String> cepsProximos);
 }

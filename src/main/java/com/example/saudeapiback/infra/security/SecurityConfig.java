@@ -32,7 +32,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/establishments/get_establishments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/establishment/get_establishments").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/establishment/get_establishments_by_city").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/establishment/get_establishments_by_cep").permitAll()
                         .requestMatchers(HttpMethod.POST, "/database/updateDb").permitAll()
                         .anyRequest().authenticated()
                 )
