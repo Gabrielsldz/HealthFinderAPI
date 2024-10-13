@@ -1,6 +1,6 @@
 package com.example.saudeapiback.infra.security;
 
-import com.example.saudeapiback.domain.user.User;
+import com.example.saudeapiback.models.user.User;
 import com.example.saudeapiback.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package com.example.saudeapiback.dto;
+package com.example.saudeapiback.dtos;
 
 public record EstabelecimentoDTO(
         String nomeRazaoSocial,

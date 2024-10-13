@@ -2,7 +2,7 @@ package com.example.saudeapiback.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
+import com.example.saudeapiback.models.estabelecimento.Estabelecimento;
 import java.util.List;
 
 

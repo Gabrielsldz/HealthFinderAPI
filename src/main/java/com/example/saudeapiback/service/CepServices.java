@@ -1,4 +1,4 @@
-package com.example.saudeapiback.services;
+package com.example.saudeapiback.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CepService {
+public class CepServices {
 
     private static final double R = 6371.0; // Raio da Terra em KM
     private static final String API_KEY = "f3853bcd03d04d3cbd13ef68ef5f14ee";

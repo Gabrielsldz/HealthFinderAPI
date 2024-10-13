@@ -1,4 +1,4 @@
-package com.example.saudeapiback.services;
+package com.example.saudeapiback.service;
 
 import com.example.saudeapiback.utils.ScraperUtil;
 import com.example.saudeapiback.utils.UpdateStatus;

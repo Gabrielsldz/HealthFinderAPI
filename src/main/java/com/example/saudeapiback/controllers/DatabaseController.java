@@ -1,6 +1,6 @@
 package com.example.saudeapiback.controllers;
 
-import com.example.saudeapiback.services.DatabaseService;
+import com.example.saudeapiback.service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,9 +1,8 @@
-package com.example.saudeapiback.services;
+package com.example.saudeapiback.service;
 
-import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
-import com.example.saudeapiback.dto.EstabelecimentoDTO;
+import com.example.saudeapiback.models.estabelecimento.Estabelecimento;
+import com.example.saudeapiback.dtos.EstabelecimentoDTO;
 import com.example.saudeapiback.repositories.EstabelecimentoRepository;
-import com.example.saudeapiback.services.CepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class EstabelecimentoService {
     private EstabelecimentoRepository estabelecimentoRepository;
 
     @Autowired
-    private CepService cepService;
+    private CepServices cepService;
 
     // Método para buscar estabelecimentos por cidade
     public List<EstabelecimentoDTO> getEstabelecimentos(Map<String, Integer> params) {

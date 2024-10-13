@@ -1,4 +1,4 @@
-package com.example.saudeapiback.domain.estabelecimento;
+package com.example.saudeapiback.models.estabelecimento;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

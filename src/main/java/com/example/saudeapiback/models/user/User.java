@@ -1,4 +1,4 @@
-package com.example.saudeapiback.domain.user;
+package com.example.saudeapiback.models.user;
 
 
 import jakarta.persistence.*;

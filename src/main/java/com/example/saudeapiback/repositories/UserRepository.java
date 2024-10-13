@@ -1,6 +1,6 @@
 package com.example.saudeapiback.repositories;
 
-import com.example.saudeapiback.domain.user.User;
+import com.example.saudeapiback.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

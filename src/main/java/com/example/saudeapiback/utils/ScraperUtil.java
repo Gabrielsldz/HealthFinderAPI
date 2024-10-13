@@ -1,7 +1,10 @@
 package com.example.saudeapiback.utils;
-
-import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
+import com.example.saudeapiback.models.estabelecimento.Estabelecimento;
 import com.example.saudeapiback.repositories.EstabelecimentoRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -16,6 +19,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Component
 public class ScraperUtil {
 
