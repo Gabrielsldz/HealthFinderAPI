@@ -25,7 +25,6 @@ public class EstabelecimentoController {
         return ResponseEntity.ok(estabelecimentoDTOs);
     }
 
-    // Novo método para buscar por CEP
     @GetMapping("/get_establishments_by_cep")
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCep(@RequestBody Map<String, Object> params) {
         try {

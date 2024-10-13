@@ -3,17 +3,19 @@ package com.example.saudeapiback.utils;
 import com.example.saudeapiback.domain.estabelecimento.Estabelecimento;
 import com.example.saudeapiback.repositories.EstabelecimentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
-// Por enquanto preenche o banco de dados porem peca na parte de atualizar somente os campos desatualizados
-// Corrigir isso posteriormente
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Component
 public class ScraperUtil {
 
@@ -23,13 +25,15 @@ public class ScraperUtil {
     private final String apiUrl = "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos";
     private RestTemplate restTemplate = new RestTemplate();
 
-    private final Map<String, String> headers = new HashMap<>() {{
-        put("accept", "application/json");
-    }};
+    private final ExecutorService executor = Executors.newFixedThreadPool(50);
+
+    private final AtomicInteger totalEstablishmentsReceived = new AtomicInteger(0);
 
     public void getAndPopulateEstablishments() {
         Map<String, String> stateCodes = loadCodes("codigos_estados.txt");
         Map<String, String> unitTypes = loadCodes("TiposUnidades.txt");
+
+        CountDownLatch latch = new CountDownLatch(stateCodes.size() * unitTypes.size());
 
         for (Map.Entry<String, String> stateEntry : stateCodes.entrySet()) {
             String state = stateEntry.getKey();
@@ -39,30 +43,45 @@ public class ScraperUtil {
                 String unit = unitEntry.getKey();
                 String unitCode = unitEntry.getValue();
 
-                Map<String, String> params = new HashMap<>();
-                params.put("codigo_tipo_unidade", unitCode);
-                params.put("codigo_uf", stateCode);
-                params.put("status", "1");
-                params.put("limit", "20");
-                params.put("offset", "50");
+                executor.submit(() -> {
+                    try {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("codigo_tipo_unidade", unitCode);
+                        params.put("codigo_uf", stateCode);
+                        params.put("status", "1");
+                        params.put("limit", "20");
+                        params.put("offset", "50");
 
-                try {
-                    Map<String, Object> response = fetchEstablishments(params);
+                        Map<String, Object> response = fetchEstablishments(params);
+                        if (response.containsKey("estabelecimentos")) {
+                            List<Map<String, Object>> estabelecimentos = (List<Map<String, Object>>) response.get("estabelecimentos");
 
-                    if (response.containsKey("estabelecimentos")) {
-                        List<Map<String, Object>> estabelecimentos = (List<Map<String, Object>>) response.get("estabelecimentos");
+                            totalEstablishmentsReceived.addAndGet(estabelecimentos.size());
+                            System.out.println("Estabelecimentos recebidos até agora: " + totalEstablishmentsReceived.get());
 
-                        for (Map<String, Object> estabelecimentoData : estabelecimentos) {
-
-                            Estabelecimento estabelecimento = convertToEstabelecimento(estabelecimentoData);
-                            upsertEstabelecimento(estabelecimento);
+                            for (Map<String, Object> estabelecimentoData : estabelecimentos) {
+                                Estabelecimento estabelecimento = convertToEstabelecimento(estabelecimentoData);
+                                upsertEstabelecimento(estabelecimento);
+                            }
                         }
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
+                    } finally {
+                        latch.countDown();
                     }
-                } catch (Exception e) {
-                    System.out.println("Error: " + e.getMessage());
-                }
+                });
             }
         }
+
+        try {
+            latch.await();  // Espera todas as tarefas serem concluídas
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("Atualização interrompida: " + e.getMessage());
+        }
+
+        executor.shutdown();
+        System.out.println("Processo de recebimento de estabelecimentos finalizado.");
     }
 
     public Map<String, String> loadCodes(String filePath) {
@@ -87,7 +106,6 @@ public class ScraperUtil {
         return codes;
     }
 
-    @Retryable(value = {RestClientException.class}, maxAttempts = 3, backoff = @Backoff(delay = 2000))
     public Map<String, Object> fetchEstablishments(Map<String, String> params) throws RestClientException {
         return restTemplate.getForObject(apiUrl + buildUrlParams(params), Map.class);
     }
@@ -113,9 +131,28 @@ public class ScraperUtil {
                     Object currentValue = field.get(existingEstabelecimento);
                     Object newValue = field.get(estabelecimento);
 
-                    if (newValue != null && (currentValue == null || !currentValue.equals(newValue))) {
-                        field.set(existingEstabelecimento, newValue);
-                        updated = true;
+                    if (field.getName().equals("latitudeEstabelecimentoDecimoGrau") || field.getName().equals("longitudeEstabelecimentoDecimoGrau")) {
+                        BigDecimal roundedCurrentValue = currentValue != null ? new BigDecimal(currentValue.toString()).setScale(4, BigDecimal.ROUND_HALF_UP) : null;
+                        BigDecimal roundedNewValue = newValue != null ? new BigDecimal(newValue.toString()).setScale(4, BigDecimal.ROUND_HALF_UP) : null;
+
+                        if (roundedNewValue != null && !roundedNewValue.equals(roundedCurrentValue)) {
+                            System.out.println("Campo: " + field.getName());
+                            System.out.println("Valor no banco de dados (arredondado): " + roundedCurrentValue);
+                            System.out.println("Valor recebido da API (arredondado): " + roundedNewValue);
+
+                            field.set(existingEstabelecimento, newValue);
+                            updated = true;
+                        }
+                    } else {
+
+                        if (newValue != null && (currentValue == null || !currentValue.equals(newValue))) {
+                            System.out.println("Campo: " + field.getName());
+                            System.out.println("Valor no banco de dados: " + currentValue);
+                            System.out.println("Valor recebido da API: " + newValue);
+
+                            field.set(existingEstabelecimento, newValue);
+                            updated = true;
+                        }
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -133,8 +170,6 @@ public class ScraperUtil {
     }
 
     private Estabelecimento convertToEstabelecimento(Map<String, Object> data) {
-
-
         Estabelecimento estabelecimento = new Estabelecimento();
         estabelecimento.setCodigoCnes((Integer) data.get("codigo_cnes"));
         estabelecimento.setNumeroCnpjEntidade((String) data.get("numero_cnpj_entidade"));
@@ -175,5 +210,4 @@ public class ScraperUtil {
 
         return estabelecimento;
     }
-
 }
