@@ -2,7 +2,7 @@ package com.example.saudeapiback.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "Parâmetros para buscar estabelecimentos por cidade")
+@Schema(name ="Parametros de busca da cidade",description = "Parâmetros para buscar estabelecimentos por cidade")
 public class CityEstablishmentParams {
 
     @Schema(description = "Código do município para filtrar os estabelecimentos", example = "123456")

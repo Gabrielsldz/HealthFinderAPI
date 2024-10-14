@@ -13,8 +13,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Pública de Saúde")
-                        .description("Documentação da API de Saúde")
+                        .title("WRAPPER para a API publica de saude")
+                        .description("Um wrapper para facilitar a busca de estabelecimentos de saúde")
                         .version("1.0")
                 );
     }

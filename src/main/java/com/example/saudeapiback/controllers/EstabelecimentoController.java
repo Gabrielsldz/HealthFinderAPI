@@ -61,15 +61,16 @@ public class EstabelecimentoController {
     })
     @GetMapping("/get_establishments_by_cep")
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCep(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Parâmetros para a busca de estabelecimentos",
-                    required = true,
-                    content = @Content(
-                            schema = @Schema(implementation = EstablishmentParams.class)
-                    )
-            )@RequestBody Map<String, Object> params) {
+            @RequestBody EstablishmentParams params) {
         try {
-            List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstablishmentsByCep(params);
+            // Convertemos o objeto EstablishmentParams para Map<String, Object>
+            Map<String, Object> paramsMap = Map.of(
+                    "cep", params.getCep(),
+                    "distance", params.getDistance(),
+                    "tipo_estabelecimento", params.getTipo_estabelecimento()
+            );
+
+            List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstablishmentsByCep(paramsMap);
             if (estabelecimentoDTOs.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
