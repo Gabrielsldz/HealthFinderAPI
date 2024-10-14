@@ -26,19 +26,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class ScraperUtil {
 
+    // Checar isoladoa em codigo_tipo_unidade
+
     @Autowired
     private EstabelecimentoRepository estabelecimentoRepository;
 
     private final String apiUrl = "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos";
     private RestTemplate restTemplate = new RestTemplate();
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(50);
+    private final int thread_number = 40;
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(thread_number);
 
     private final AtomicInteger totalEstablishmentsReceived = new AtomicInteger(0);
 
     public void getAndPopulateEstablishments() {
         Map<String, String> stateCodes = loadCodes("codigos_estados.txt");
         Map<String, String> unitTypes = loadCodes("TiposUnidades.txt");
+        System.out.println(thread_number);
 
         CountDownLatch latch = new CountDownLatch(stateCodes.size() * unitTypes.size());
 
@@ -81,7 +86,7 @@ public class ScraperUtil {
         }
 
         try {
-            latch.await();  // Espera todas as tarefas serem concluídas
+            latch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.out.println("Atualização interrompida: " + e.getMessage());
