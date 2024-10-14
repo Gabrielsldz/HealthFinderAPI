@@ -1,4 +1,5 @@
 package com.example.saudeapiback.controllers;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.example.saudeapiback.service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/database")
+@Tag(name = "Base de Dados", description = "Gerenciamento e atualização da base de dados")
 public class DatabaseController {
 
     @Autowired

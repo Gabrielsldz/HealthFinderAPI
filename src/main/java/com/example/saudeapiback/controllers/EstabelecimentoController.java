@@ -1,5 +1,6 @@
 package com.example.saudeapiback.controllers;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.saudeapiback.dtos.CityEstablishmentParams;
 import com.example.saudeapiback.dtos.EstabelecimentoDTO;
 import com.example.saudeapiback.dtos.EstablishmentParams;
 import com.example.saudeapiback.service.EstabelecimentoService;
@@ -18,14 +19,31 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/establishment")
+@Tag(name = "Estabelecimentos", description = "Gerenciamento de estabelecimentos de saúde")
 public class EstabelecimentoController {
 
     @Autowired
     private EstabelecimentoService estabelecimentoService;
 
+    @Operation(
+            summary = "Buscar estabelecimentos por cidade",
+            description = "Este endpoint retorna uma lista de estabelecimentos filtrados pelo código de município e, opcionalmente, o tipo de unidade.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Parâmetros para a busca de estabelecimentos",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = CityEstablishmentParams.class)
+                    )
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Sucesso, estabelecimentos retornados"),
+            @ApiResponse(responseCode = "404", description = "Nenhum estabelecimento encontrado"),
+            @ApiResponse(responseCode = "400", description = "Erro na requisição, verifique os parâmetros enviados")
+    })
     @GetMapping("/get_establishments_by_city")
-    public ResponseEntity<List<EstabelecimentoDTO>> getEstablishments(
-     @RequestBody Map<String, Integer> params) {
+    public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCity(
+            @RequestBody Map<String, Integer> params) {
         List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstabelecimentos(params);
         if (estabelecimentoDTOs.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -41,7 +59,7 @@ public class EstabelecimentoController {
             @ApiResponse(responseCode = "404", description = "Nenhum estabelecimento encontrado dentro da distância informada"),
             @ApiResponse(responseCode = "400", description = "Erro na requisição, verifique os parâmetros enviados")
     })
-    @PostMapping("/get_establishments_by_cep")
+    @GetMapping("/get_establishments_by_cep")
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCep(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Parâmetros para a busca de estabelecimentos",
