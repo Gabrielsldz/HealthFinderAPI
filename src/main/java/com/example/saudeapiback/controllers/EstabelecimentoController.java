@@ -41,16 +41,22 @@ public class EstabelecimentoController {
             @ApiResponse(responseCode = "404", description = "Nenhum estabelecimento encontrado"),
             @ApiResponse(responseCode = "400", description = "Erro na requisição, verifique os parâmetros enviados")
     })
-    @GetMapping("/get_establishments_by_city")
-    // Fazer a conversao igual no get_stablishments_by_cep pro params no swagger funcionar corretamente
+    @PostMapping("/get_establishments_by_city") // Alterado para POST já que usa @RequestBody
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCity(
-            @RequestBody Map<String, Integer> params) {
-        List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstabelecimentos(params);
+            @RequestBody CityEstablishmentParams params) {
+
+        Map<String, Integer> paramsMap = Map.of(
+                "codigo_municipio", params.getCodigo_municipio(),
+                "codigo_tipo_unidade", params.getCodigo_tipo_unidade()
+        );
+
+        List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstabelecimentos(paramsMap);
         if (estabelecimentoDTOs.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(estabelecimentoDTOs);
     }
+
     @Operation(
             summary = "Buscar estabelecimentos por CEP e distância",
             description = "Este endpoint retorna uma lista de estabelecimentos próximos ao CEP de referência informado, com base na distância máxima e tipo de estabelecimento fornecidos."
