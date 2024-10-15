@@ -6,6 +6,10 @@ import com.example.saudeapiback.dtos.ResponseDTO;
 import com.example.saudeapiback.infra.security.TokenService;
 import com.example.saudeapiback.models.user.User;
 import com.example.saudeapiback.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +25,19 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Controle de usuario", description = "Gerenciamento de usuarios")
 public class AuthController {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    @Operation(
+            summary = "Efetuar login",
+            description = "Endpoint para efetuar login."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login efetuado com sucesso"),
 
+    })
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginRequestDTO body){
         User user = this.repository.findByEmail(body.email()).orElseThrow(() -> new RuntimeException("User not found"));
@@ -36,7 +48,14 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
+    @Operation(
+            summary = "Registrar usuário",
+            description = "Endpoint para efetuar registro."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registro efetuado com sucesso"),
 
+    })
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequestDTO body){
         Optional<User> user = this.repository.findByEmail(body.email());

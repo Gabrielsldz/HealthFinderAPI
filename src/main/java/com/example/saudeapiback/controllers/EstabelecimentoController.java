@@ -42,6 +42,7 @@ public class EstabelecimentoController {
             @ApiResponse(responseCode = "400", description = "Erro na requisição, verifique os parâmetros enviados")
     })
     @GetMapping("/get_establishments_by_city")
+    // Fazer a conversao igual no get_stablishments_by_cep pro params no swagger funcionar corretamente
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCity(
             @RequestBody Map<String, Integer> params) {
         List<EstabelecimentoDTO> estabelecimentoDTOs = estabelecimentoService.getEstabelecimentos(params);
@@ -63,7 +64,6 @@ public class EstabelecimentoController {
     public ResponseEntity<List<EstabelecimentoDTO>> getEstablishmentsByCep(
             @RequestBody EstablishmentParams params) {
         try {
-            // Convertemos o objeto EstablishmentParams para Map<String, Object>
             Map<String, Object> paramsMap = Map.of(
                     "cep", params.getCep(),
                     "distance", params.getDistance(),
