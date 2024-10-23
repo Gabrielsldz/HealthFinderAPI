@@ -28,7 +28,7 @@ A aplicação também possui funcionalidades automáticas de atualização, onde
 Clone o projeto para a sua máquina local:
 
 ```bash
-git clone https://github.com/username/HealthFinderAPI.git
+git clone https://github.com/Gabrielsldz/HealthFinderAPI.git
 ```
 
 ### 2. Configurando o banco de dados
